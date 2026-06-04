@@ -1,4 +1,4 @@
-# <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -849,3 +849,25 @@ function toggleSkill(el) { el.classList.toggle('active'); }
 </script>
 </body>
 </html>
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Logs e arquivos temporários comuns
+*.log
+*.tmp
+*.bak
+
+# Diretórios de build
+build/
+dist/
+out/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Outros arquivos gerados
+*.class
+*.o
+*.obj
