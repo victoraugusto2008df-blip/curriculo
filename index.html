@@ -552,23 +552,42 @@ function doPrint() {
 
   const img = document.getElementById('print-image');
 
-  // Set src if not yet loaded
-  if (!img.src || img.src === window.location.href) {
-    btn.classList.add('printing');
-    label.textContent = 'Carregando...';
-    img.src = RESUME_SRC;
-    img.onload = () => {
-      btn.classList.remove('printing');
-      label.textContent = 'Imprimir';
-      window.print();
-    };
-    img.onerror = () => {
-      btn.classList.remove('printing');
-      label.textContent = 'Imprimir';
-    };
-  } else {
+  const trigger = () => {
+    btn.classList.remove('printing');
+    label.textContent = 'Imprimir';
     window.print();
+  };
+
+  // If image already loaded (src is set and complete)
+  if (img.src && img.src !== window.location.href && img.complete && img.naturalWidth > 0) {
+    trigger();
+    return;
   }
+
+  btn.classList.add('printing');
+  label.textContent = 'Carregando...';
+
+  if (!img.src || img.src === window.location.href) {
+    img.src = RESUME_SRC;
+  }
+
+  let fired = false;
+  const fire = () => {
+    if (fired) return;
+    fired = true;
+    trigger();
+  };
+
+  img.onload  = fire;
+  img.onerror = () => {
+    btn.classList.remove('printing');
+    label.textContent = 'Imprimir';
+  };
+
+  // Fallback: if onload never fires (cached image), call after short delay
+  setTimeout(() => {
+    if (!fired) fire();
+  }, 800);
 }
 
 /* ── PARTICLES ── */
