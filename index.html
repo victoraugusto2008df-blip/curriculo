@@ -358,28 +358,11 @@ footer { text-align: center; font-size: .68rem; color: var(--muted); letter-spac
   #printBtn { padding: .5rem .6rem; border-radius: 50%; }
 }
 
-/* ── PRINT IMAGE (hidden on screen, shown on print) ── */
-#print-image {
-  display: none;
-}
 
-@media print {
-  @page { size: A4 portrait; margin: 0; }
-  body > * { display: none !important; }
-  #print-image {
-    display: block !important;
-    position: fixed !important;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    object-fit: contain;
-    background: #fff;
-  }
-}
 </style>
 </head>
 <body>
 
-<img id="print-image" alt="Currículo Victor Augusto">
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <div id="progress-bar"></div>
@@ -550,44 +533,37 @@ function doPrint() {
   const label = document.getElementById('printLabel');
   if (btn.classList.contains('printing')) return;
 
-  const img = document.getElementById('print-image');
-
-  const trigger = () => {
-    btn.classList.remove('printing');
-    label.textContent = 'Imprimir';
-    window.print();
-  };
-
-  // If image already loaded (src is set and complete)
-  if (img.src && img.src !== window.location.href && img.complete && img.naturalWidth > 0) {
-    trigger();
-    return;
-  }
-
   btn.classList.add('printing');
-  label.textContent = 'Carregando...';
+  label.textContent = 'Abrindo...';
 
-  if (!img.src || img.src === window.location.href) {
-    img.src = RESUME_SRC;
+  // Convert base64 to Blob URL (loads instantly, no size issue)
+  try {
+    const b64   = RESUME_SRC.split(',')[1];
+    const bin   = atob(b64);
+    const arr   = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    const blob  = new Blob([arr], { type: 'image/jpeg' });
+    const url   = URL.createObjectURL(blob);
+
+    // Open blob URL directly — browser shows it immediately, user presses Ctrl+P
+    const win = window.open(url, '_blank');
+    if (win) {
+      win.focus();
+    } else {
+      // Fallback: navigate current tab (rare case)
+      window.location.href = url;
+    }
+
+    // Revoke after 60s
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(e) {
+    alert('Erro ao preparar o PDF: ' + e.message);
   }
 
-  let fired = false;
-  const fire = () => {
-    if (fired) return;
-    fired = true;
-    trigger();
-  };
-
-  img.onload  = fire;
-  img.onerror = () => {
+  setTimeout(() => {
     btn.classList.remove('printing');
     label.textContent = 'Imprimir';
-  };
-
-  // Fallback: if onload never fires (cached image), call after short delay
-  setTimeout(() => {
-    if (!fired) fire();
-  }, 800);
+  }, 1200);
 }
 
 /* ── PARTICLES ── */
