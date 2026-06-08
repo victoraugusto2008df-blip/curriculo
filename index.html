@@ -534,66 +534,57 @@ const RESUME_SRC = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAkACQAAD/4QD2RXhpZ
 function doPrint() {
   const btn   = document.getElementById('printBtn');
   const label = document.getElementById('printLabel');
-
-  // Prevent double-click
   if (btn.classList.contains('printing')) return;
   btn.classList.add('printing');
-  label.textContent = 'Preparando...';
+  label.textContent = 'Abrindo...';
 
-  // Remove any previous iframe
-  const old = document.getElementById('print-frame');
-  if (old) old.remove();
+  // Convert base64 to blob, open as object URL — avoids popup blockers and onload issues
+  const base64 = RESUME_SRC.split(',')[1];
+  const binary = atob(base64);
+  const bytes  = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const blob   = new Blob([bytes], { type: 'image/jpeg' });
+  const url    = URL.createObjectURL(blob);
 
-  // Build hidden iframe
-  const iframe = document.createElement('iframe');
-  iframe.id = 'print-frame';
-  iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:0;height:0;border:none;';
-  document.body.appendChild(iframe);
-
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open();
-  doc.write(`<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Currículo — Victor Augusto Ribeiro Mota</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4 portrait; margin: 0; }
   html, body { width: 210mm; background: #fff; }
   img { display: block; width: 210mm; height: auto; }
-  @page { size: A4 portrait; margin: 0; }
 </style>
 </head>
 <body>
-<img src="${RESUME_SRC}">
+<img src="${url}">
+<script>
+  document.querySelector('img').onload = function() {
+    window.print();
+    setTimeout(function() { window.close(); }, 500);
+  };
+<\/script>
 </body>
-</html>`);
-  doc.close();
+</html>`;
 
-  // Wait for image to load inside iframe, then print
-  const img = doc.querySelector('img');
-  const trigger = () => {
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('Por favor, permita pop-ups para este site e tente novamente.');
     btn.classList.remove('printing');
     label.textContent = 'Imprimir';
-  };
-
-  if (img.complete) {
-    // Already cached
-    setTimeout(trigger, 100);
-  } else {
-    img.onload  = () => setTimeout(trigger, 100);
-    img.onerror = () => {
-      btn.classList.remove('printing');
-      label.textContent = 'Imprimir';
-      alert('Erro ao carregar imagem para impressão.');
-    };
-    // Fallback timeout
-    setTimeout(() => {
-      if (btn.classList.contains('printing')) trigger();
-    }, 4000);
+    URL.revokeObjectURL(url);
+    return;
   }
+  win.document.write(html);
+  win.document.close();
+
+  setTimeout(() => {
+    btn.classList.remove('printing');
+    label.textContent = 'Imprimir';
+    URL.revokeObjectURL(url);
+  }, 3000);
 }
 
 /* ── PARTICLES ── */
