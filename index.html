@@ -14,12 +14,46 @@ html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;}
 #progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--blue));z-index:300;transition:width .1s linear;}
-#printBtn{position:fixed;top:1.2rem;right:1.2rem;z-index:500;display:flex;align-items:center;gap:.5rem;background:var(--card);color:var(--ink);border:1.5px solid var(--border);border-radius:50px;padding:.5rem 1.1rem .5rem .85rem;font-family:'DM Sans',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 2px 14px rgba(0,0,0,.08);transition:background .25s,color .25s,border-color .25s,transform .2s;}
-#printBtn:hover{background:var(--ink);color:var(--bg);border-color:var(--ink);transform:translateY(-1px);}
-#printBtn:active{transform:scale(.96);}
-#printBtn svg{width:14px;height:14px;flex-shrink:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
-#printBtn:hover svg{transform:translateY(2px);}
-#printBtn.printing{background:var(--accent);color:#fff;border-color:var(--accent);pointer-events:none;}
+
+.btn-container {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 500;
+  display: flex;
+  gap: .5rem;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--card);
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  padding: .5rem 1.1rem .5rem .85rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 14px rgba(0,0,0,.08);
+  transition: background .25s, color .25s, border-color .25s, transform .2s;
+}
+
+.actionBtn:hover {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.actionBtn:active { transform: scale(.96); }
+.actionBtn svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+.actionBtn:hover svg { transform: translateY(2px); }
+
 .wrapper{max-width:980px;margin:0 auto;padding:4rem 2rem 6rem;}
 header{display:grid;grid-template-columns:1fr auto;align-items:end;gap:2rem;padding-bottom:2.5rem;margin-bottom:3.5rem;position:relative;}
 header::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--ink),var(--accent) 40%,var(--blue) 70%,transparent);border-radius:2px;animation:lineGrow .9s 1.4s cubic-bezier(.4,0,.2,1) forwards;}
@@ -129,24 +163,37 @@ footer{text-align:center;font-size:.68rem;color:var(--muted);letter-spacing:.15e
 
 /* ── RESPONSIVE ── */
 @media(min-width:1200px){.wrapper{padding:5rem 3rem 7rem;}.name-block h1{font-size:5.2rem;}section{margin-bottom:3.5rem;}}
-@media(max-width:900px)and(min-width:601px){.wrapper{padding:3rem 1.8rem 5rem;}header{gap:1.4rem;}.name-block h1{font-size:clamp(2rem,5vw,3.2rem);}.contact-side{font-size:.76rem;}.section-header h2{font-size:1.2rem;}#printBtn{top:1rem;right:1rem;font-size:.68rem;}}
-@media(max-width:600px){.wrapper{padding:1.8rem 1.1rem 4rem;}header{grid-template-columns:1fr;gap:1.2rem;padding-bottom:1.6rem;margin-bottom:2rem;}.contact-side{text-align:left;font-size:.8rem;}.name-block h1{font-size:clamp(2.2rem,11vw,3rem);}.section-header h2{font-size:1.1rem;}.objective-box{padding:1.1rem 1.2rem;font-size:.88rem;}.exp-card{padding:1.1rem 1.2rem;}.edu-grid{grid-template-columns:1fr;}.skill-tag{font-size:.74rem;padding:.36rem .8rem;}#printBtn{top:.9rem;right:.9rem;font-size:.65rem;padding:.4rem .85rem .4rem .65rem;}}
-@media(max-width:380px){.wrapper{padding:1.4rem .9rem 3rem;}.name-block h1{font-size:clamp(1.9rem,10vw,2.4rem);}#printBtn span{display:none;}#printBtn{padding:.5rem .6rem;border-radius:50%;}}
-@media print{#printBtn,#progress-bar,#particles-canvas{display:none!important;}}
+@media(max-width:900px)and(min-width:601px){.wrapper{padding:3rem 1.8rem 5rem;}header{gap:1.4rem;}.name-block h1{font-size:clamp(2rem,5vw,3.2rem);}.contact-side{font-size:.76rem;}.section-header h2{font-size:1.2rem;}.btn-container{top:1rem;right:1rem;}.actionBtn{font-size:.68rem;}}
+@media(max-width:600px){.wrapper{padding:1.8rem 1.1rem 4rem;}header{grid-template-columns:1fr;gap:1.2rem;padding-bottom:1.6rem;margin-bottom:2rem;}.contact-side{text-align:left;font-size:.8rem;}.name-block h1{font-size:clamp(2.2rem,11vw,3rem);}.section-header h2{font-size:1.1rem;}.objective-box{padding:1.1rem 1.2rem;font-size:.88rem;}.exp-card{padding:1.1rem 1.2rem;}.edu-grid{grid-template-columns:1fr;}.skill-tag{font-size:.74rem;padding:.36rem .8rem;}.btn-container{top:.9rem;right:.9rem;}.actionBtn{font-size:.65rem;padding:.4rem .85rem .4rem .65rem;}}
+@media(max-width:380px){.wrapper{padding:1.4rem .9rem 3rem;}.name-block h1{font-size:clamp(1.9rem,10vw,2.4rem);}.actionBtn span{display:none;}.actionBtn{padding:.5rem .6rem;border-radius:50%;}}
+@media print{.btn-container,#progress-bar,#particles-canvas{display:none!important;}}
 </style>
 </head>
 <body>
 <div id="progress-bar"></div>
 
-<button id="printBtn" onclick="doPrint()" title="Imprimir currículo">
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="1" width="10" height="8" rx="1"/>
-    <path d="M3 9H1.5A.5.5 0 001 9.5v4a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-4a.5.5 0 00-.5-.5H13"/>
-    <rect x="4" y="11" width="8" height="4" rx=".5"/>
-    <circle cx="12.5" cy="11" r=".7" fill="currentColor" stroke="none"/>
-  </svg>
-  <span id="printLabel">Imprimir</span>
-</button>
+<div class="btn-container">
+  <!-- Botão de impressão do navegador -->
+  <button class="actionBtn" onclick="doPrint()" title="Imprimir versão Web">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="1" width="10" height="8" rx="1"/>
+      <path d="M3 9H1.5A.5.5 0 001 9.5v4a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-4a.5.5 0 00-.5-.5H13"/>
+      <rect x="4" y="11" width="8" height="4" rx=".5"/>
+      <circle cx="12.5" cy="11" r=".7" fill="currentColor" stroke="none"/>
+    </svg>
+    <span id="printLabel">Imprimir Web</span>
+  </button>
+
+  <!-- Botão para abrir/imprimir diretamente o arquivo PDF formatado -->
+  <a class="actionBtn" href="curriculo_victor_augusto.pdf" target="_blank" title="Abrir e Imprimir PDF oficial A4">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 10v3.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V10"/>
+      <polyline points="4 6 8 10 12 6"/>
+      <line x1="8" y1="10" x2="8" y2="2"/>
+    </svg>
+    <span>PDF A4 (Oficial)</span>
+  </a>
+</div>
 
 <div class="wrapper">
   <header>
@@ -292,15 +339,17 @@ function toggleSection(header) {
 function toggleSkill(el) { el.classList.toggle('active'); }
 
 function doPrint() {
-  const btn = document.getElementById('printBtn');
+  // Antes de imprimir a página web, abre todas as seçõesSan
+  document.querySelectorAll('section .section-header').forEach(h => {
+    h.classList.remove('closed');
+    if (h.nextElementSibling) h.nextElementSibling.classList.remove('hidden');
+  });
+
   const label = document.getElementById('printLabel');
-  if (btn.classList.contains('printing')) return;
-  btn.classList.add('printing');
   label.textContent = 'Abrindo...';
   setTimeout(() => {
     window.print();
-    btn.classList.remove('printing');
-    label.textContent = 'Imprimir';
+    label.textContent = 'Imprimir Web';
   }, 200);
 }
 
